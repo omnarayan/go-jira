@@ -84,15 +84,16 @@ type ProjectComponent struct {
 // GetList gets all projects form JIRA
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getAllProjects
-func (s *ProjectService) GetList() (*ProjectList, *Response, error) {
+func (s *ProjectService) GetList() (ProjectList, *Response, error) {
 	apiEndpoint := "rest/api/2/project"
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
+
 		return nil, nil, err
 	}
 
-	projectList := new(ProjectList)
-	resp, err := s.client.Do(req, projectList)
+	projectList := ProjectList{}
+	resp, err := s.client.Do(req, &projectList)
 	if err != nil {
 		jerr := NewJiraError(resp, err)
 		return nil, resp, jerr
@@ -106,19 +107,39 @@ func (s *ProjectService) GetList() (*ProjectList, *Response, error) {
 // This can be an project id, or an project key.
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getProject
-func (s *ProjectService) Get(projectID string) (*Project, *Response, error) {
+func (s *ProjectService) Get(projectID string) (Project, *Response, error) {
 	apiEndpoint := fmt.Sprintf("rest/api/2/project/%s", projectID)
+
+	project := Project{}
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
-		return nil, nil, err
+		return project, nil, err
 	}
 
-	project := new(Project)
-	resp, err := s.client.Do(req, project)
+	resp, err := s.client.Do(req, &project)
 	if err != nil {
 		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
+		return project, resp, jerr
 	}
 
 	return project, resp, nil
+}
+
+// GetComponents get Components
+func (s *ProjectService) GetComponents(projectID string) ([]Component, error) {
+	apiEndpoint := fmt.Sprintf("rest/api/2/project/%s/components", projectID)
+
+	components := []Component{}
+	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
+	if err != nil {
+		return components, err
+	}
+
+	resp, err := s.client.Do(req, &components)
+	if err != nil {
+		jerr := NewJiraError(resp, err)
+		return components, jerr
+	}
+
+	return components, nil
 }

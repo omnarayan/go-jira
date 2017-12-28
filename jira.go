@@ -31,6 +31,7 @@ type Client struct {
 	Sprint         *SprintService
 	User           *UserService
 	Group          *GroupService
+	Field          *FieldService
 }
 
 // NewClient returns a new JIRA API client.
@@ -61,6 +62,7 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	c.Sprint = &SprintService{client: c}
 	c.User = &UserService{client: c}
 	c.Group = &GroupService{client: c}
+	c.Field = &FieldService{client: c}
 
 	return c, nil
 }
@@ -212,6 +214,7 @@ func (c *Client) NewMultiPartRequest(method, urlStr string, buf *bytes.Buffer) (
 // The API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	httpResp, err := c.client.Do(req)
+	fmt.Println("We got error in making call ", httpResp)
 	if err != nil {
 		return nil, err
 	}
