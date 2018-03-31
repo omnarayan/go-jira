@@ -75,10 +75,7 @@ type ProjectComponent struct {
 // GetList gets all projects form JIRA
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getAllProjects
-<<<<<<< HEAD
-func (s *ProjectService) GetList() (ProjectList, *Response, error) {
-=======
-func (s *ProjectService) GetList() (*ProjectList, *Response, error) {
+func (s *ProjectService) GetList() (ProjectList, error) {
 	return s.ListWithOptions(&GetQueryOptions{})
 }
 
@@ -86,36 +83,30 @@ func (s *ProjectService) GetList() (*ProjectList, *Response, error) {
 // a list of all projects and their supported issuetypes
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getAllProjects
-func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (*ProjectList, *Response, error) {
->>>>>>> f9c91e2a6be53464f27662c88c89938be4fbe1c6
+func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (ProjectList, error) {
 	apiEndpoint := "rest/api/2/project"
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
 
-		return nil, nil, err
+		return nil, err
 	}
 
-<<<<<<< HEAD
-	projectList := ProjectList{}
-	resp, err := s.client.Do(req, &projectList)
-=======
 	if options != nil {
 		q, err := query.Values(options)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		req.URL.RawQuery = q.Encode()
 	}
 
 	projectList := new(ProjectList)
 	resp, err := s.client.Do(req, projectList)
->>>>>>> f9c91e2a6be53464f27662c88c89938be4fbe1c6
 	if err != nil {
 		jerr := NewJiraError(resp, err)
-		return nil, resp, jerr
+		return nil, jerr
 	}
 
-	return projectList, resp, nil
+	return *projectList, nil
 }
 
 // Get returns a full representation of the project for the given issue key.
@@ -158,4 +149,23 @@ func (s *ProjectService) GetComponents(projectID string) ([]Component, error) {
 	}
 
 	return components, nil
+}
+
+// GetAssignees get users
+func (s *ProjectService) GetAssignees(projectID string) ([]User, error) {
+	apiEndpoint := fmt.Sprintf("rest/api/2/user/assignable/search?project=%s&maxResults=1000", projectID)
+
+	users := []User{}
+	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
+	if err != nil {
+		return users, err
+	}
+
+	resp, err := s.client.Do(req, &users)
+	if err != nil {
+		jerr := NewJiraError(resp, err)
+		return users, jerr
+	}
+
+	return users, nil
 }

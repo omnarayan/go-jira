@@ -19,6 +19,7 @@ type FieldSchema struct {
 type Field struct {
 	Self   string      `json:"self" structs:"self,omitempty"`
 	ID     string      `json:"id" structs:"id,omitempty"`
+	Key    string      `json:"key" structs:"key,omitempty"`
 	Name   string      `json:"name" structs:"name,omitempty"`
 	Custom bool        `json:"custom" structs:"custom,omitempty"`
 	Schema FieldSchema `json:"schema" structs:"schema,omitempty"`
@@ -51,6 +52,7 @@ func (s *FieldService) GetList() ([]Field, error) {
 	}
 
 	resp, err := s.client.Do(req, &fields)
+
 	if err != nil {
 		jerr := NewJiraError(resp, err)
 		return nil, jerr

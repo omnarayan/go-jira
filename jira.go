@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -33,11 +34,8 @@ type Client struct {
 	Sprint         *SprintService
 	User           *UserService
 	Group          *GroupService
-<<<<<<< HEAD
 	Field          *FieldService
-=======
 	Version        *VersionService
->>>>>>> f9c91e2a6be53464f27662c88c89938be4fbe1c6
 }
 
 // NewClient returns a new JIRA API client.
@@ -68,11 +66,8 @@ func NewClient(httpClient *http.Client, baseURL string) (*Client, error) {
 	c.Sprint = &SprintService{client: c}
 	c.User = &UserService{client: c}
 	c.Group = &GroupService{client: c}
-<<<<<<< HEAD
 	c.Field = &FieldService{client: c}
-=======
 	c.Version = &VersionService{client: c}
->>>>>>> f9c91e2a6be53464f27662c88c89938be4fbe1c6
 
 	return c, nil
 }
@@ -224,7 +219,7 @@ func (c *Client) NewMultiPartRequest(method, urlStr string, buf *bytes.Buffer) (
 // The API response is JSON decoded and stored in the value pointed to by v, or returned as an error if an API error has occurred.
 func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	httpResp, err := c.client.Do(req)
-	fmt.Println("We got error in making call ", httpResp)
+	// fmt.Println("We got error in making call ", httpResp)
 	if err != nil {
 		return nil, err
 	}
@@ -233,6 +228,11 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 	if err != nil {
 		// Even though there was an error, we still return the response
 		// in case the caller wants to inspect it further
+		// Read the content
+		var bodyBytes []byte
+		bodyBytes, _ = ioutil.ReadAll(httpResp.Body)
+
+		fmt.Println("request body ", string(bodyBytes))
 		return newResponse(httpResp, nil), err
 	}
 
@@ -254,8 +254,13 @@ func CheckResponse(r *http.Response) error {
 	if c := r.StatusCode; 200 <= c && c <= 299 {
 		return nil
 	}
-
 	err := fmt.Errorf("Request failed. Please analyze the request body for more details. Status code: %d", r.StatusCode)
+	if r.StatusCode == 403 {
+		err = fmt.Errorf("Request failed. Please check user name and password. Status code: %d", r.StatusCode)
+	} else if r.StatusCode == 400 {
+		err = fmt.Errorf("Request failed. Please check payload. Status code: %d", r.StatusCode)
+	}
+
 	return err
 }
 
