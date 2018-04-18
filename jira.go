@@ -254,11 +254,13 @@ func CheckResponse(r *http.Response) error {
 	if c := r.StatusCode; 200 <= c && c <= 299 {
 		return nil
 	}
-	err := fmt.Errorf("Request failed. Please analyze the request body for more details. Status code: %d", r.StatusCode)
+	var bodyBytes []byte
+	bodyBytes, _ = ioutil.ReadAll(r.Body)
+	err := fmt.Errorf("Jira Api response status code: %d. Response from jira server %s", r.StatusCode, string(bodyBytes))
 	if r.StatusCode == 403 {
-		err = fmt.Errorf("Request failed. Please check user name and password. Status code: %d", r.StatusCode)
+		err = fmt.Errorf("Please check user name and password. Jira Api response status code: %d", r.StatusCode)
 	} else if r.StatusCode == 400 {
-		err = fmt.Errorf("Request failed. Please check payload. Status code: %d", r.StatusCode)
+		err = fmt.Errorf("Please check payload.J ira Api response status code: %d", r.StatusCode)
 	}
 
 	return err
