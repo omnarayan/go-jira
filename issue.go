@@ -639,13 +639,16 @@ func (s *IssueService) Create(issue *Issue) (*Issue, *Response, error) {
 	resp, err := s.client.Do(req, nil)
 	if err != nil {
 		// incase of error return the resp for further inspection
+		fmt.Println("We got error in creating jira bug", err)
 		return nil, resp, err
 	}
 
 	responseIssue := new(Issue)
 	defer resp.Body.Close()
 	data, err := ioutil.ReadAll(resp.Body)
+
 	if err != nil {
+		fmt.Println("\n response ", string(data))
 		return nil, resp, fmt.Errorf("Could not read the returned data")
 	}
 	err = json.Unmarshal(data, responseIssue)

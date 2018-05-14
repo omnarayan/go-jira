@@ -226,13 +226,14 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 
 	err = CheckResponse(httpResp)
 	if err != nil {
+		fmt.Println("We got error in jira request ", err.Error())
 		// Even though there was an error, we still return the response
 		// in case the caller wants to inspect it further
 		// Read the content
 		var bodyBytes []byte
 		bodyBytes, _ = ioutil.ReadAll(httpResp.Body)
 
-		fmt.Println("request body ", string(bodyBytes))
+		fmt.Println("jira request body ", string(bodyBytes))
 		return newResponse(httpResp, nil), err
 	}
 
@@ -256,11 +257,12 @@ func CheckResponse(r *http.Response) error {
 	}
 	var bodyBytes []byte
 	bodyBytes, _ = ioutil.ReadAll(r.Body)
+	fmt.Println("We got error in jira response parsing ", string(bodyBytes))
 	err := fmt.Errorf("Jira Api response status code: %d. Response from jira server %s", r.StatusCode, string(bodyBytes))
 	if r.StatusCode == 403 {
 		err = fmt.Errorf("Please check user name and password. Jira Api response status code: %d", r.StatusCode)
 	} else if r.StatusCode == 400 {
-		err = fmt.Errorf("Please check payload.J ira Api response status code: %d", r.StatusCode)
+		err = fmt.Errorf("Please check payload. Jira Api response status code: %d and jira server response is '%s'", r.StatusCode, string(bodyBytes))
 	}
 
 	return err
