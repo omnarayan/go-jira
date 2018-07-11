@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/google/go-querystring/query"
@@ -260,6 +261,8 @@ func CheckResponse(r *http.Response) error {
 	fmt.Println("We got error in jira response parsing ", string(bodyBytes))
 	if r.StatusCode == 401 {
 		return fmt.Errorf("Invalid username or password. Status code %d received from jira server", r.StatusCode)
+	} else if r.StatusCode == 400 && strings.Contains(string(bodyBytes), "'reporter' cannot be set") {
+		return fmt.Errorf("User bug_configuration_user_email does not have privilege to set 'reporter' in JIRA")
 	}
 	err := fmt.Errorf("Jira Api response status code: %d. Response from jira server %s", r.StatusCode, string(bodyBytes))
 	if r.StatusCode == 403 {
