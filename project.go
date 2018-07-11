@@ -87,13 +87,15 @@ func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (ProjectList,
 	apiEndpoint := "rest/api/2/project"
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
-
 		return nil, err
 	}
 
 	if options != nil {
+
 		q, err := query.Values(options)
 		if err != nil {
+
+			fmt.Println(" We are here in jira ", err)
 			return nil, err
 		}
 		req.URL.RawQuery = q.Encode()
@@ -102,6 +104,7 @@ func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (ProjectList,
 	projectList := new(ProjectList)
 	resp, err := s.client.Do(req, projectList)
 	if err != nil {
+
 		jerr := NewJiraError(resp, err)
 		return nil, jerr
 	}

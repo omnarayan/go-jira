@@ -19,6 +19,7 @@ type Error struct {
 
 // NewJiraError creates a new jira Error
 func NewJiraError(resp *Response, httpError error) error {
+	fmt.Println("We got httpError ", httpError)
 	if resp == nil {
 		return errors.Wrap(httpError, "No response returned")
 	}

@@ -258,6 +258,9 @@ func CheckResponse(r *http.Response) error {
 	var bodyBytes []byte
 	bodyBytes, _ = ioutil.ReadAll(r.Body)
 	fmt.Println("We got error in jira response parsing ", string(bodyBytes))
+	if r.StatusCode == 401 {
+		return fmt.Errorf("Invalid username or password, we got status code %d from jira server", r.StatusCode)
+	}
 	err := fmt.Errorf("Jira Api response status code: %d. Response from jira server %s", r.StatusCode, string(bodyBytes))
 	if r.StatusCode == 403 {
 		err = fmt.Errorf("Please check user name and password. Jira Api response status code: %d", r.StatusCode)
