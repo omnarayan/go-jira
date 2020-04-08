@@ -31,12 +31,12 @@ type IssueService struct {
 
 // Issue represents a JIRA issue.
 type Issue struct {
-	Expand    string       `json:"expand,omitempty" structs:"expand,omitempty"`
-	ID        string       `json:"id,omitempty" structs:"id,omitempty"`
-	Self      string       `json:"self,omitempty" structs:"self,omitempty"`
-	Key       string       `json:"key,omitempty" structs:"key,omitempty"`
-	Fields    *IssueFields `json:"fields,omitempty" structs:"fields,omitempty"`
-	Changelog *Changelog   `json:"changelog,omitempty" structs:"changelog,omitempty"`
+	Expand    string      `json:"expand,omitempty" structs:"expand,omitempty"`
+	ID        string      `json:"id,omitempty" structs:"id,omitempty"`
+	Self      string      `json:"self,omitempty" structs:"self,omitempty"`
+	Key       string      `json:"key,omitempty" structs:"key,omitempty"`
+	Fields    IssueFields `json:"fields,omitempty" structs:"fields,omitempty"`
+	Changelog *Changelog  `json:"changelog,omitempty" structs:"changelog,omitempty"`
 }
 
 // ChangelogItems reflects one single changelog item of a history item
@@ -86,8 +86,28 @@ type Epic struct {
 	Done    bool   `json:"done" structs:"done"`
 }
 
+// Content  content
+type Content struct {
+	Type string `json:"type" structs:"type"`
+	Text string `json:"text" structs:"text"`
+}
+
+// MainContent main content
+type MainContent struct {
+	Type    string    `json:"type" structs:"type"`
+	Content []Content `json:"content" structs:"content"`
+}
+
+// Description desc doc
+type Description struct {
+	Type    string        `json:"type" structs:"type"`
+	Version int           `json:"version" structs:"version"`
+	Content []MainContent `json:"content" structs:"content"`
+}
+
 // IssueFields represents single fields of a JIRA issue.
 // Every JIRA issue has several fields attached.
+
 type IssueFields struct {
 	// TODO Missing fields
 	//      * "aggregatetimespent": null,
@@ -105,12 +125,12 @@ type IssueFields struct {
 	Created              Time          `json:"created,omitempty" structs:"created,omitempty"`
 	Duedate              Date          `json:"duedate,omitempty" structs:"duedate,omitempty"`
 	Watches              *Watches      `json:"watches,omitempty" structs:"watches,omitempty"`
-	Assignee             *User         `json:"assignee,omitempty" structs:"assignee,omitempty"`
+	Assignee             *IssueUser    `json:"assignee,omitempty" structs:"assignee,omitempty"`
 	Updated              Time          `json:"updated,omitempty" structs:"updated,omitempty"`
-	Description          string        `json:"description,omitempty" structs:"description,omitempty"`
+	Description          Description   `json:"description,omitempty" structs:"description,omitempty"`
 	Summary              string        `json:"summary,omitempty" structs:"summary,omitempty"`
-	Creator              *User         `json:"Creator,omitempty" structs:"Creator,omitempty"`
-	Reporter             *User         `json:"reporter,omitempty" structs:"reporter,omitempty"`
+	Creator              *IssueUser    `json:"Creator,omitempty" structs:"Creator,omitempty"`
+	Reporter             *IssueUser    `json:"reporter,omitempty" structs:"reporter,omitempty"`
 	Components           []*Component  `json:"components,omitempty" structs:"components,omitempty"`
 	Status               *Status       `json:"status,omitempty" structs:"status,omitempty"`
 	Progress             *Progress     `json:"progress,omitempty" structs:"progress,omitempty"`
@@ -1008,7 +1028,7 @@ func InitIssueWithMetaAndFields(metaProject *MetaProject, metaIssuetype *MetaIss
 		}
 	}
 
-	issue.Fields = issueFields
+	issue.Fields = *issueFields
 
 	return issue, nil
 }

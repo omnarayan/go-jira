@@ -29,6 +29,22 @@ type User struct {
 	ApplicationKeys []string   `json:"applicationKeys,omitempty" structs:"applicationKeys,omitempty"`
 }
 
+//IssueUser issue user
+type IssueUser struct {
+	Self            string     `json:"self,omitempty" structs:"self,omitempty"`
+	Name            string     `json:"name,omitempty" structs:"name,omitempty"`
+	Password        string     `json:"-"`
+	Key             string     `json:"key,omitempty" structs:"key,omitempty"`
+	ID              string     `json:"id,omitempty" structs:"id,omitempty"`
+	EmailAddress    string     `json:"emailAddress,omitempty" structs:"emailAddress,omitempty"`
+	AvatarURL       string     `json:"avatarUrl,omitempty" structs:"avatarUrl,avatarUrl"`
+	AvatarUrls      AvatarUrls `json:"avatarUrls,omitempty" structs:"avatarUrls,omitempty"`
+	DisplayName     string     `json:"displayName,omitempty" structs:"displayName,omitempty"`
+	Active          bool       `json:"active,omitempty" structs:"active,omitempty"`
+	TimeZone        string     `json:"timeZone,omitempty" structs:"timeZone,omitempty"`
+	ApplicationKeys []string   `json:"applicationKeys,omitempty" structs:"applicationKeys,omitempty"`
+}
+
 // UserGroup represents the group list
 type UserGroup struct {
 	Self string `json:"self,omitempty" structs:"self,omitempty"`

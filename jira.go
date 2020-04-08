@@ -129,8 +129,10 @@ func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Requ
 		if err != nil {
 			return nil, err
 		}
-	}
 
+	}
+	payload, _ := json.Marshal(body)
+	fmt.Printf("\n\nRaw data %s\n\n", string(payload))
 	req, err := http.NewRequest(method, u.String(), buf)
 	if err != nil {
 		return nil, err
