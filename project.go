@@ -20,6 +20,7 @@ type ProjectList []struct {
 	ID              string          `json:"id" structs:"id"`
 	Key             string          `json:"key" structs:"key"`
 	Name            string          `json:"name" structs:"name"`
+	AvatarURL       string          `json:"avatarURL" structs:"avatarURL"`
 	AvatarUrls      AvatarUrls      `json:"avatarUrls" structs:"avatarUrls"`
 	ProjectTypeKey  string          `json:"projectTypeKey" structs:"projectTypeKey"`
 	ProjectCategory ProjectCategory `json:"projectCategory,omitempty" structs:"projectsCategory,omitempty"`
@@ -45,6 +46,7 @@ type Project struct {
 	Components   []ProjectComponent `json:"components,omitempty" structs:"components,omitempty"`
 	IssueTypes   []IssueType        `json:"issueTypes,omitempty" structs:"issueTypes,omitempty"`
 	URL          string             `json:"url,omitempty" structs:"url,omitempty"`
+	AvatarURL    string             `json:"avatarURL" structs:"avatarURL"`
 	Email        string             `json:"email,omitempty" structs:"email,omitempty"`
 	AssigneeType string             `json:"assigneeType,omitempty" structs:"assigneeType,omitempty"`
 	Versions     []Version          `json:"versions,omitempty" structs:"versions,omitempty"`
@@ -84,7 +86,7 @@ func (s *ProjectService) GetList() (ProjectList, error) {
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getAllProjects
 func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (ProjectList, error) {
-	apiEndpoint := "rest/api/2/project"
+	apiEndpoint := "rest/api/3/project"
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
 	if err != nil {
 		return nil, err
@@ -118,7 +120,7 @@ func (s *ProjectService) ListWithOptions(options *GetQueryOptions) (ProjectList,
 //
 // JIRA API docs: https://docs.atlassian.com/jira/REST/latest/#api/2/project-getProject
 func (s *ProjectService) Get(projectID string) (Project, *Response, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/project/%s", projectID)
+	apiEndpoint := fmt.Sprintf("rest/api/3/project/%s", projectID)
 
 	project := Project{}
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
@@ -137,7 +139,7 @@ func (s *ProjectService) Get(projectID string) (Project, *Response, error) {
 
 // GetComponents get Components
 func (s *ProjectService) GetComponents(projectID string) ([]Component, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/project/%s/components", projectID)
+	apiEndpoint := fmt.Sprintf("rest/api/3/project/%s/components", projectID)
 
 	components := []Component{}
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)
@@ -156,7 +158,7 @@ func (s *ProjectService) GetComponents(projectID string) ([]Component, error) {
 
 // GetAssignees get users
 func (s *ProjectService) GetAssignees(projectID string) ([]User, error) {
-	apiEndpoint := fmt.Sprintf("rest/api/2/user/assignable/search?project=%s&maxResults=1000", projectID)
+	apiEndpoint := fmt.Sprintf("rest/api/3/user/assignable/search?project=%s&maxResults=1000", projectID)
 
 	users := []User{}
 	req, err := s.client.NewRequest("GET", apiEndpoint, nil)

@@ -19,7 +19,9 @@ type User struct {
 	Name            string     `json:"name,omitempty" structs:"name,omitempty"`
 	Password        string     `json:"-"`
 	Key             string     `json:"key,omitempty" structs:"key,omitempty"`
+	ID              string     `json:"accountid,omitempty" structs:"accountid,omitempty"`
 	EmailAddress    string     `json:"emailAddress,omitempty" structs:"emailAddress,omitempty"`
+	AvatarURL       string     `json:"avatarUrl,omitempty" structs:"avatarUrl,avatarUrl"`
 	AvatarUrls      AvatarUrls `json:"avatarUrls,omitempty" structs:"avatarUrls,omitempty"`
 	DisplayName     string     `json:"displayName,omitempty" structs:"displayName,omitempty"`
 	Active          bool       `json:"active,omitempty" structs:"active,omitempty"`

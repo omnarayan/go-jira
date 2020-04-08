@@ -237,11 +237,16 @@ func (c *Client) Do(req *http.Request, v interface{}) (*Response, error) {
 		fmt.Println("jira request body ", string(bodyBytes))
 		return newResponse(httpResp, nil), err
 	}
+	// bodyBytes, _ := ioutil.ReadAll(httpResp.Body)
+	// bodyString := string(bodyBytes)
+	// fmt.Printf("\nUrl - %s, \n data - %s\n", req.URL.Path, bodyString)
+	// httpResp.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
 	if v != nil {
 		// Open a NewDecoder and defer closing the reader only if there is a provided interface to decode to
 		defer httpResp.Body.Close()
 		err = json.NewDecoder(httpResp.Body).Decode(v)
+		// fmt.Printf("\nparse %+v \n", v)
 	}
 
 	resp := newResponse(httpResp, v)
